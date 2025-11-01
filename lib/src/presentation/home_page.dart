@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:developer'; // Para usar o log
+import 'package:racaton_ead/src/presentation/rotas_page.dart'; // Assumindo que seu caminho está correto
 
 // Imports para localização
 import 'package:geolocator/geolocator.dart';
@@ -17,30 +18,33 @@ class _HomePageState extends State<HomePage> {
 
   int _mainPageIndex = 0;
   int _atrativoChipIndex = 0;
-
-  // NOVO: Controlador para a barra de busca
   late TextEditingController _searchController;
-
-  // NOVO: Estado de loading para o botão de localização
   bool _isLoadingLocation = false;
 
   @override
   void initState() {
     super.initState();
-    // Inicializa o controlador da barra de busca
     _searchController = TextEditingController();
+    // Adiciona o "ouvinte" para a busca em tempo real
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
-    // Limpa o controlador quando o widget é removido
+    // Remove o "ouvinte" para evitar vazamento de memória
+    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
 
-  // --- NOVA FUNÇÃO DE LOCALIZAÇÃO ---
+  /// Chamado toda vez que o texto na barra de busca muda
+  void _onSearchChanged() {
+    // Notifica o Flutter para reconstruir o widget
+    // Isso passa o novo `_searchController.text` para a RotasPage
+    setState(() {});
+  }
 
-  /// Tenta obter a localização atual e preenche a barra de busca
+  // --- FUNÇÃO DE LOCALIZAÇÃO ---
   Future<void> _getCurrentLocation() async {
     setState(() {
       _isLoadingLocation = true; // Mostra o loading
@@ -81,12 +85,12 @@ class _HomePageState extends State<HomePage> {
       // 5. Atualiza a barra de busca
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
-        String city = place.locality ?? place.subAdministrativeArea ?? "Localização";
+        String city =
+            place.locality ?? place.subAdministrativeArea ?? "Localização";
         _searchController.text = city; // Coloca a cidade no campo de busca
       }
     } catch (e) {
       log('Erro ao obter localização: $e');
-      // Mostra um feedback de erro para o usuário
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -103,14 +107,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   // --- Build ---
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
+        child: Column( // Coluna principal
           children: [
+            // --- Conteúdo Superior (Header, Busca) ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: _buildHeader(),
@@ -120,28 +124,45 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: _buildSearchBar(), // Widget atualizado
             ),
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20), // <-- CORREÇÃO: Removido espaço estático daqui
+
+            // --- Conteúdo da Página (Ocupa todo o espaço restante) ---
+            // Adicionado AnimatedSwitcher para a transição entre as páginas
             Expanded(
-              child: IndexedStack(
-                index: _mainPageIndex,
-                children: [
-                  _buildAtrativosPage(),
-                  _buildEventosPage(),
-                  _buildRotasPage(),
-                ],
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300), // Duração da transição
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(opacity: animation, child: child); // Transição de fade
+                },
+                child: _getPageWidget(_mainPageIndex), // Seleciona o widget da página atual
               ),
             ),
+
+            // --- NOVA NAVBAR CUSTOMIZADA ---
+            _buildCustomBottomNavBar(),
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
     );
+  }
+
+  // Método auxiliar para obter o widget da página com base no índice
+  Widget _getPageWidget(int index) {
+    switch (index) {
+      case 0:
+        return _buildAtrativosPage();
+      case 1:
+        return _buildEventosPage();
+      case 2:
+        return RotasPage(searchQuery: _searchController.text);
+      default:
+        return Container(); // Fallback
+    }
   }
 
   // --- Widgets Auxiliares ---
 
   Widget _buildHeader() {
-    // ... (código do header sem alterações)
     return Row(
       children: [
         const CircleAvatar(
@@ -179,7 +200,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- WIDGET ATUALIZADO ---
   Widget _buildSearchBar() {
     return TextField(
       controller: _searchController, // Conectado ao controlador
@@ -195,7 +215,7 @@ class _HomePageState extends State<HomePage> {
         suffixIcon: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // NOVO: Condição de Loading
+            // Condição de Loading
             _isLoadingLocation
                 ? const Padding(
                     padding: EdgeInsets.all(12.0),
@@ -232,10 +252,11 @@ class _HomePageState extends State<HomePage> {
   // --- Widgets de CONTEÚDO DE PÁGINA ---
 
   Widget _buildAtrativosPage() {
-    // ... (código da página sem alterações)
     return SingleChildScrollView(
+      key: const PageStorageKey('atrativosPage'), // Importante para manter o estado da página
       child: Column(
         children: [
+          const SizedBox(height: 20), // <-- CORREÇÃO: Adicionado espaço aqui dentro da rolagem
           _buildAtrativosFilterChips(),
           const SizedBox(height: 24),
           Padding(
@@ -258,8 +279,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildEventosPage() {
-    // ... (código da página sem alterações)
     return Container(
+      key: const PageStorageKey('eventosPage'), // Importante para manter o estado da página
       alignment: Alignment.center,
       child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -279,32 +300,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildRotasPage() {
-    // ... (código da página sem alterações)
-    return Container(
-      alignment: Alignment.center,
-      child: const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.route, size: 50, color: Colors.grey),
-          SizedBox(height: 16),
-          Text(
-            'Nenhuma rota cadastrada',
-            style: TextStyle(fontSize: 18, color: Colors.grey),
-          ),
-          Text(
-            'Aqui aparecerá a lista de rotas turísticas.',
-            style: TextStyle(color: Colors.grey),
-          ),
-        ],
-      ),
-    );
-  }
-
   // --- Widgets de SUPORTE ---
 
   Widget _buildAtrativosFilterChips() {
-    // ... (código dos chips sem alterações)
     final List<String> categories = [
       'Todas',
       'Praias',
@@ -347,7 +345,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildSectionTitle(String title, String actionText) {
-    // ... (código do título sem alterações)
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -379,7 +376,6 @@ class _HomePageState extends State<HomePage> {
     required String location,
     required String price,
   }) {
-    // ... (código do card sem alterações)
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -484,37 +480,119 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildBottomNavBar() {
-    // ... (código da navbar sem alterações)
-    return BottomNavigationBar(
-      onTap: (index) {
+  // --- NOVOS WIDGETS DA NAVBAR CUSTOMIZADA ---
+
+  /// Constrói a barra de navegação flutuante customizada
+  Widget _buildCustomBottomNavBar() {
+    return Padding(
+      // Padding para criar o efeito "flutuante"
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[200], // Fundo cinza claro
+          borderRadius:
+              BorderRadius.circular(50.0), // Bordas bem arredondadas
+        ),
+        child: Row(
+          children: [
+            // Cada item agora é "Expanded" para preencher 1/3 do espaço
+            Expanded(
+              child: _buildNavItem(
+                unselectedIcon: Icons.star_outline,
+                selectedIcon: Icons.star, // Ícone preenchido
+                label: 'Atrativos',
+                index: 0,
+              ),
+            ),
+            Expanded(
+              child: _buildNavItem(
+                unselectedIcon: Icons.calendar_month_outlined,
+                selectedIcon: Icons.calendar_month, // Ícone preenchido
+                label: 'Eventos',
+                index: 1,
+              ),
+            ),
+            Expanded(
+              child: _buildNavItem(
+                unselectedIcon: Icons.route_outlined,
+                selectedIcon: Icons.route, // Ícone preenchido
+                label: 'Rotas',
+                index: 2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Constrói cada item individual da navegação
+  Widget _buildNavItem({
+    required IconData unselectedIcon,
+    required IconData selectedIcon,
+    required String label,
+    required int index,
+  }) {
+    final bool isSelected = (_mainPageIndex == index);
+    final Color selectedColor =
+        const Color(0xFF4D22A1); // Cor roxa da pílula
+    final Color unselectedColor =
+        Colors.black87; // Cor do ícone e texto não selecionado
+
+    return GestureDetector(
+      onTap: () {
         setState(() {
           _mainPageIndex = index;
         });
       },
-      currentIndex: _mainPageIndex,
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: const Color(0xFF4D22A1),
-      unselectedItemColor: Colors.grey,
-      showSelectedLabels: true,
-      showUnselectedLabels: false,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.star_outline),
-          activeIcon: Icon(Icons.star),
-          label: 'Atrativos',
+      // Faz a área transparente do GestureDetector ser clicável
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300), // Animação do fundo
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+        decoration: BoxDecoration(
+          // Define a cor da "pílula" roxa ou a deixa transparente
+          color: isSelected ? selectedColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(30.0),
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_month_outlined),
-          activeIcon: Icon(Icons.calendar_month),
-          label: 'Eventos',
+        // Anima a mudança de estilo do texto (cor e peso)
+        child: AnimatedDefaultTextStyle(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          style: TextStyle(
+            color: isSelected ? Colors.white : unselectedColor,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 14,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Centraliza o ícone e texto
+            children: [
+              // Icone animado
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 200),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return ScaleTransition(scale: animation, child: child); // Animação de escala para o ícone
+                },
+                child: Icon(
+                  isSelected ? selectedIcon : unselectedIcon,
+                  key: ValueKey<bool>(isSelected), // Chave para AnimatedSwitcher
+                  color: isSelected ? Colors.white : unselectedColor,
+                  size: 22,
+                ),
+              ),
+              // Adiciona um espaço
+              const SizedBox(width: 4), // <-- Alterado de 6 para 4
+              // O texto agora herda o estilo do AnimatedDefaultTextStyle
+              Text(
+                label,
+                // Removido 'const' daqui
+              ),
+            ],
+          ),
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.route_outlined),
-          activeIcon: Icon(Icons.route),
-          label: 'Rotas',
-        ),
-      ],
+      ),
     );
   }
 }
