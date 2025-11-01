@@ -108,8 +108,11 @@ class _RotasPageState extends State<RotasPage> {
       } else {
         // Se houver busca, filtra pelo título
         rotasFiltradas = _todasAsRotas
-            .where((rota) =>
-                rota.titulo.toLowerCase().contains(widget.searchQuery.toLowerCase()))
+            .where(
+              (rota) => rota.titulo.toLowerCase().contains(
+                widget.searchQuery.toLowerCase(),
+              ),
+            )
             .toList();
       }
 
@@ -125,9 +128,7 @@ class _RotasPageState extends State<RotasPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_rotasEncontradas.isEmpty) {
@@ -153,11 +154,12 @@ class _RotasPageState extends State<RotasPage> {
 
     // --- 3. A LISTA DE CARDS ---
     return ListView.builder(
+      shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       itemCount: _rotasEncontradas.length,
       itemBuilder: (context, index) {
         final rota = _rotasEncontradas[index];
-        
+
         // --- CORREÇÃO APLICADA AQUI ---
         return GestureDetector(
           onTap: () {
@@ -166,14 +168,14 @@ class _RotasPageState extends State<RotasPage> {
               MaterialPageRoute(
                 builder: (context) => RotaDetalhesPage(
                   // Passa o ID da rota
-                  id: rota.id, 
+                  id: rota.id,
                   imagePath: rota.imagemPath,
                   title: rota.titulo,
                   description: rota.descricao,
-                  location: null, 
-                  price: null, 
+                  location: null,
+                  price: null,
                   // Passa a duração da rota
-                  duracao: rota.duracao, 
+                  duracao: rota.duracao,
                 ),
               ),
             );
@@ -187,11 +189,9 @@ class _RotasPageState extends State<RotasPage> {
   // --- 4. WIDGET DO CARD ---
   Widget _buildRotaCard(Rota rota) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 20.0), 
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      clipBehavior: Clip.antiAlias, 
+      margin: const EdgeInsets.only(bottom: 20.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+      clipBehavior: Clip.antiAlias,
       elevation: 3,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,10 +233,7 @@ class _RotasPageState extends State<RotasPage> {
                 const SizedBox(height: 8),
                 Text(
                   rota.descricao,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[700],
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -245,7 +242,9 @@ class _RotasPageState extends State<RotasPage> {
                     _buildInfoChip(Icons.timer_outlined, rota.duracao),
                     const SizedBox(width: 10),
                     _buildInfoChip(
-                        Icons.location_on_outlined, '${rota.paradas} paradas'),
+                      Icons.location_on_outlined,
+                      '${rota.paradas} paradas',
+                    ),
                   ],
                 ),
               ],
@@ -280,4 +279,3 @@ class _RotasPageState extends State<RotasPage> {
     );
   }
 }
-

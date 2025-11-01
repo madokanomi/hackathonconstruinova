@@ -68,7 +68,8 @@ class _HomePageState extends State<HomePage> {
 
       if (permission == LocationPermission.deniedForever) {
         throw Exception(
-            'Permissão de localização negada permanentemente. Abra as configurações.');
+          'Permissão de localização negada permanentemente. Abra as configurações.',
+        );
       }
 
       // 3. Obtém a posição atual
@@ -112,7 +113,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column( // Coluna principal
+        child: Column(
+          // Coluna principal
           children: [
             // --- Conteúdo Superior (Header, Busca) ---
             Padding(
@@ -129,12 +131,23 @@ class _HomePageState extends State<HomePage> {
             // --- Conteúdo da Página (Ocupa todo o espaço restante) ---
             // Adicionado AnimatedSwitcher para a transição entre as páginas
             Expanded(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300), // Duração da transição
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return FadeTransition(opacity: animation, child: child); // Transição de fade
-                },
-                child: _getPageWidget(_mainPageIndex), // Seleciona o widget da página atual
+              child: SizedBox(
+                height: double.infinity,
+                child: AnimatedSwitcher(
+                  duration: const Duration(
+                    milliseconds: 300,
+                  ), // Duração da transição
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        ); // Transição de fade
+                      },
+                  child: _getPageWidget(
+                    _mainPageIndex,
+                  ), // Seleciona o widget da página atual
+                ),
               ),
             ),
 
@@ -175,10 +188,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Text(
               'Bom dia, Felipe',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             ),
             Text(
               'Turistando!',
@@ -252,35 +262,44 @@ class _HomePageState extends State<HomePage> {
   // --- Widgets de CONTEÚDO DE PÁGINA ---
 
   Widget _buildAtrativosPage() {
-    return SingleChildScrollView(
-      key: const PageStorageKey('atrativosPage'), // Importante para manter o estado da página
-      child: Column(
-        children: [
-          const SizedBox(height: 20), // <-- CORREÇÃO: Adicionado espaço aqui dentro da rolagem
-          _buildAtrativosFilterChips(),
-          const SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: _buildSectionTitle("Recomendado", "Todas"),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: _buildRecommendationCard(
-              imagePath: 'assets/praia_peruibe.jpg',
-              title: 'Praia do Guaraú',
-              location: 'Peruíbe',
-              price: '150',
+    return SizedBox(
+      height: double.infinity,
+      child: SingleChildScrollView(
+        key: const PageStorageKey(
+          'atrativosPage',
+        ), // Importante para manter o estado da página
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 20,
+            ), // <-- CORREÇÃO: Adicionado espaço aqui dentro da rolagem
+            _buildAtrativosFilterChips(),
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: _buildSectionTitle("Recomendado", "Todas"),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: _buildRecommendationCard(
+                imagePath: 'lib/src/assets/praia_peruibe.jpg',
+                title: 'Praia do Guaraú',
+                location: 'Peruíbe',
+                price: '150',
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildEventosPage() {
     return Container(
-      key: const PageStorageKey('eventosPage'), // Importante para manter o estado da página
+      key: const PageStorageKey(
+        'eventosPage',
+      ), // Importante para manter o estado da página
       alignment: Alignment.center,
       child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -307,7 +326,7 @@ class _HomePageState extends State<HomePage> {
       'Todas',
       'Praias',
       'Trilhas',
-      'Restaurantes'
+      'Restaurantes',
     ];
 
     return SizedBox(
@@ -360,10 +379,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {},
           child: Text(
             actionText,
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
-            ),
+            style: const TextStyle(color: Colors.grey, fontSize: 14),
           ),
         ),
       ],
@@ -401,8 +417,11 @@ class _HomePageState extends State<HomePage> {
                     height: 200,
                     color: Colors.grey[300],
                     child: const Center(
-                        child: Icon(Icons.image_not_supported,
-                            color: Colors.grey)),
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.grey,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -415,10 +434,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.white.withOpacity(0.8),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: const Icon(
-                    Icons.bookmark_border,
-                    color: Colors.black,
-                  ),
+                  child: const Icon(Icons.bookmark_border, color: Colors.black),
                 ),
               ),
             ],
@@ -442,8 +458,11 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.location_on,
-                            color: Color(0xFF0052FF), size: 16),
+                        const Icon(
+                          Icons.location_on,
+                          color: Color(0xFF0052FF),
+                          size: 16,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           location,
@@ -457,8 +476,10 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10.0),
@@ -491,8 +512,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
         decoration: BoxDecoration(
           color: Colors.grey[200], // Fundo cinza claro
-          borderRadius:
-              BorderRadius.circular(50.0), // Bordas bem arredondadas
+          borderRadius: BorderRadius.circular(50.0), // Bordas bem arredondadas
         ),
         child: Row(
           children: [
@@ -535,8 +555,7 @@ class _HomePageState extends State<HomePage> {
     required int index,
   }) {
     final bool isSelected = (_mainPageIndex == index);
-    final Color selectedColor =
-        const Color(0xFF4D22A1); // Cor roxa da pílula
+    final Color selectedColor = const Color(0xFF4D22A1); // Cor roxa da pílula
     final Color unselectedColor =
         Colors.black87; // Cor do ícone e texto não selecionado
 
@@ -567,17 +586,23 @@ class _HomePageState extends State<HomePage> {
             fontSize: 14,
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center, // Centraliza o ícone e texto
+            mainAxisAlignment:
+                MainAxisAlignment.center, // Centraliza o ícone e texto
             children: [
               // Icone animado
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
                 transitionBuilder: (Widget child, Animation<double> animation) {
-                  return ScaleTransition(scale: animation, child: child); // Animação de escala para o ícone
+                  return ScaleTransition(
+                    scale: animation,
+                    child: child,
+                  ); // Animação de escala para o ícone
                 },
                 child: Icon(
                   isSelected ? selectedIcon : unselectedIcon,
-                  key: ValueKey<bool>(isSelected), // Chave para AnimatedSwitcher
+                  key: ValueKey<bool>(
+                    isSelected,
+                  ), // Chave para AnimatedSwitcher
                   color: isSelected ? Colors.white : unselectedColor,
                   size: 22,
                 ),

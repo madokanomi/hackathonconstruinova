@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:ui'; // Necessário para ImageFilter
 
 // --- NOVO: Modelo de Dados para as Paradas da Rota ---
 class RotaStop {
@@ -89,21 +88,21 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
         title: 'Mirante do Guaraú',
         category: 'Mirante',
         description: 'Ponto de partida com vista panorâmica da praia e do rio.',
-        imagePath: 'assets/rota_guarau_1.jpg', // Adicione esta imagem
+        imagePath: 'lib/src/assets/rota_guarau_1.jpg', // Adicione esta imagem
       ),
       RotaStop(
         km: '2.5KM',
         title: 'Trilha do Índio',
         category: 'Trilha',
         description: 'Pequena trilha que leva a uma cachoeira escondida.',
-        imagePath: 'assets/rota_guarau_2.jpg', // Adicione esta imagem
+        imagePath: 'lib/src/assets/rota_guarau_2.jpg', // Adicione esta imagem
       ),
       RotaStop(
         km: '4.0KM',
         title: 'Restaurante Caiçara',
         category: 'Restaurante',
         description: 'Parada para almoço com pratos típicos à beira-mar.',
-        imagePath: 'assets/rota_guarau_3.jpg', // Adicione esta imagem
+        imagePath: 'lib/src/assets/rota_guarau_3.jpg', // Adicione esta imagem
       ),
     ],
     // Paradas para o Roteiro '1' da rotas_page
@@ -269,7 +268,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
             onTap: () => Navigator.of(context).pop(),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.arrow_back, color: Colors.black),
@@ -280,10 +279,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
       body: SingleChildScrollView(
         padding: EdgeInsets.zero,
         child: Column(
-          children: [
-            _buildHeaderImage(context),
-            _buildContentSheet(context),
-          ],
+          children: [_buildHeaderImage(context), _buildContentSheet(context)],
         ),
       ),
       bottomNavigationBar: _buildBookingBar(context),
@@ -308,10 +304,14 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
         children: [
           Container(
             decoration: BoxDecoration(
-              borderRadius:
-                  const BorderRadius.vertical(bottom: Radius.circular(30)),
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(30),
+              ),
               gradient: LinearGradient(
-                colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.6),
+                ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 stops: const [0.5, 1.0],
@@ -325,7 +325,8 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (widget.location != null) _buildLocationTag(widget.location!),
+                if (widget.location != null)
+                  _buildLocationTag(widget.location!),
                 Text(
                   widget.title,
                   style: const TextStyle(
@@ -342,16 +343,15 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
                     children: [
                       const Text(
                         'Starting at',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -379,7 +379,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.25),
+        color: Colors.white.withValues(alpha: 0.25),
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: Colors.white54, width: 1),
       ),
@@ -440,10 +440,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
                 Flexible(
                   child: Text(
                     'Já participaram desse roteiro!',
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14),
                   ),
                 ),
               ],
@@ -451,7 +448,9 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
 
             // --- NOVO: Seção da Linha do Tempo ---
             if (_paradasDaRota.isNotEmpty) ...[
-              const SizedBox(height: 32), // Espaçamento entre Avatars e o Título
+              const SizedBox(
+                height: 32,
+              ), // Espaçamento entre Avatars e o Título
               const Text(
                 'O Caminho da Rota',
                 style: TextStyle(
@@ -550,10 +549,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
           child: Text(
             _personCount.toString().padLeft(2, '0'),
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
         _buildCounterButton(
@@ -564,8 +560,10 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
     );
   }
 
-  Widget _buildCounterButton(
-      {required IconData icon, required VoidCallback onPressed}) {
+  Widget _buildCounterButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(8),
@@ -585,7 +583,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
       Colors.orange,
       Colors.blueGrey,
       Colors.teal,
-      Color(0xFF0052FF)
+      Color(0xFF0052FF),
     ];
     const List<String> initials = ["S", "M", "J", "+23"];
 
@@ -640,7 +638,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
     );
   }
 
-// --- MÉTODO ATUALIZADO: Alinhamento da Timeline ---
+  // --- MÉTODO ATUALIZADO: Alinhamento da Timeline ---
   Widget _buildTimelineConnector(bool isLast, String km) {
     const Color timelineColor = Color(0xFF0052FF); // Cor azul
 
@@ -656,21 +654,23 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
           // E 32 - 8 (metade do ponto) = 24... vamos testar com 32
           // O padding top anterior de 10 parecia funcionar bem, vamos manter.
           // O alinhamento é visual, o '10' parece alinhar o topo da bola com o topo da imagem
-          const Padding(
-            padding: EdgeInsets.only(top: 10),
-          ),
+          const Padding(padding: EdgeInsets.only(top: 10)),
 
           // Ponto (Círculo)
           Container(
             width: 16,
             height: 16,
             decoration: BoxDecoration(
-                color: timelineColor,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 3),
-                boxShadow: [
-                  BoxShadow(color: timelineColor.withOpacity(0.5), blurRadius: 5)
-                ]),
+              color: timelineColor,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: timelineColor.withValues(alpha: 0.5),
+                  blurRadius: 5,
+                ),
+              ],
+            ),
           ),
           // Texto do KM (posicionado abaixo do ponto)
           Padding(
@@ -718,8 +718,10 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
                 width: 80,
                 height: 80,
                 color: Colors.grey[200],
-                child:
-                    const Icon(Icons.image_not_supported, color: Colors.grey),
+                child: const Icon(
+                  Icons.image_not_supported,
+                  color: Colors.grey,
+                ),
               ),
             ),
           ),
@@ -727,7 +729,10 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
           Expanded(
             child: Padding(
               // Adiciona espaçamento apenas à esquerda da imagem
-              padding: const EdgeInsets.only(left: 16.0, top: 8), //Pequeno ajuste no top
+              padding: const EdgeInsets.only(
+                left: 16.0,
+                top: 8,
+              ), //Pequeno ajuste no top
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -754,7 +759,10 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
                   Text(
                     stop.description,
                     style: TextStyle(
-                        color: Colors.grey[700], fontSize: 13, height: 1.4),
+                      color: Colors.grey[700],
+                      fontSize: 13,
+                      height: 1.4,
+                    ),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -772,12 +780,16 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
   Widget _buildBookingBar(BuildContext context) {
     return Container(
       padding: EdgeInsets.fromLTRB(
-          24, 16, 24, 16 + MediaQuery.of(context).padding.bottom),
+        24,
+        16,
+        24,
+        16 + MediaQuery.of(context).padding.bottom,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 15,
             offset: const Offset(0, -5),
           ),
@@ -802,10 +814,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
               ),
               Text(
                 '(${_personCount} Pessoas)',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
             ],
           ),
@@ -833,6 +842,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
       ),
     );
   }
+
   // --- MÉTODO ATUALIZADO: Exibe o BottomSheet para selecionar data/hora ---
   void _showBookingSheet() {
     // --- ATUALIZADO: Esta variável é local do sheet, para UI (expansão) ---
@@ -850,14 +860,13 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
         // (no caso, qual card está selecionado)
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setStateInSheet) {
-            
             // --- NOVO: Funções locais para o contador no sheet ---
-            void _incrementInSheet() {
+            void incrementInSheet() {
               _incrementCount(); // Chama a função principal (que tem setState)
               setStateInSheet(() {}); // Atualiza a UI do sheet
             }
 
-            void _decrementInSheet() {
+            void decrementInSheet() {
               _decrementCount(); // Chama a função principal (que tem setState)
               setStateInSheet(() {}); // Atualiza a UI do sheet
             }
@@ -875,32 +884,28 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
                 children: [
                   const Text(
                     'Selecione Data e Hora',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 20),
 
                   // Lista de datas disponíveis
-                  _buildAvailabilityList(
-                    _selectedSlotInSheet,
-                    (TourAvailability selected) {
-                      // 1. Atualiza a UI do BottomSheet (expansão do card)
-                      setStateInSheet(() {
-                        if (_selectedSlotInSheet == selected) {
-                          _selectedSlotInSheet = null;
-                        } else {
-                          _selectedSlotInSheet = selected;
-                        }
-                      });
-                      
-                      // 2. Atualiza a UI da Página (preço na barra inferior)
-                      setState(() {
-                        _selectedSlot = _selectedSlotInSheet;
-                      });
-                    },
-                  ),
+                  _buildAvailabilityList(_selectedSlotInSheet, (
+                    TourAvailability selected,
+                  ) {
+                    // 1. Atualiza a UI do BottomSheet (expansão do card)
+                    setStateInSheet(() {
+                      if (_selectedSlotInSheet == selected) {
+                        _selectedSlotInSheet = null;
+                      } else {
+                        _selectedSlotInSheet = selected;
+                      }
+                    });
+
+                    // 2. Atualiza a UI da Página (preço na barra inferior)
+                    setState(() {
+                      _selectedSlot = _selectedSlotInSheet;
+                    });
+                  }),
 
                   // --- NOVO: Seção de Quantidade e Preço Total ---
                   const Divider(height: 32),
@@ -919,12 +924,12 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
                       ),
                       _buildPersonCounter(
                         const Color(0xFF0052FF),
-                        onIncrement: _incrementInSheet,
-                        onDecrement: _decrementInSheet,
+                        onIncrement: incrementInSheet,
+                        onDecrement: decrementInSheet,
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 20),
 
                   Row(
@@ -948,21 +953,21 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
                       ),
                     ],
                   ),
-                  // --- Fim da Nova Seção ---
 
+                  // --- Fim da Nova Seção ---
                   const SizedBox(height: 24),
-                  
+
                   // Botão de Confirmação
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       // O botão é desabilitado se nenhuma data for selecionada
                       onPressed: _selectedSlotInSheet == null
-                          ? null 
+                          ? null
                           : () {
                               // 1. Fecha o bottom sheet
                               Navigator.pop(ctx);
-                              
+
                               // 2. Define o estado final da página (caso não tenha sido definido)
                               setState(() {
                                 _selectedSlot = _selectedSlotInSheet;
@@ -1007,8 +1012,9 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
 
   // --- NOVO MÉTODO: Constrói a lista de datas roláveis ---
   Widget _buildAvailabilityList(
-      TourAvailability? selectedSlot, Function(TourAvailability) onSlotSelected) {
-    
+    TourAvailability? selectedSlot,
+    Function(TourAvailability) onSlotSelected,
+  ) {
     if (_disponibilidade.isEmpty) {
       return const Center(
         child: Padding(
@@ -1020,7 +1026,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
         ),
       );
     }
-    
+
     // Usamos um Flexible dentro da Column para limitar a altura do ListView
     return Flexible(
       child: ListView.builder(
@@ -1029,7 +1035,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
         itemBuilder: (context, index) {
           final availability = _disponibilidade[index];
           final bool isSelected = selectedSlot == availability;
-          
+
           return _buildAvailabilityCard(
             availability: availability,
             isSelected: isSelected,
@@ -1050,7 +1056,9 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
     // Formata a data de forma simples (ex: 25/12/2025)
     String formattedDate =
         "${availability.date.day}/${availability.date.month}/${availability.date.year}";
-    Color tileColor = isSelected ? Colors.blue.withOpacity(0.05) : Colors.transparent;
+    Color tileColor = isSelected
+        ? Colors.blue.withValues(alpha: 0.05)
+        : Colors.transparent;
     Color borderColor = isSelected ? Colors.blue[800]! : Colors.grey[300]!;
 
     return Card(
@@ -1058,16 +1066,17 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: borderColor,
-          width: isSelected ? 2 : 1,
-        ),
+        side: BorderSide(color: borderColor, width: isSelected ? 2 : 1),
       ),
-      clipBehavior: Clip.antiAlias, // Garante que o conteúdo interno respeite o radius
+      clipBehavior:
+          Clip.antiAlias, // Garante que o conteúdo interno respeite o radius
       child: Column(
         children: [
           ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
             tileColor: tileColor,
             onTap: () => onSelected(availability),
             leading: Column(
@@ -1090,7 +1099,9 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
             trailing: Text(
               '${availability.availableSlots} vagas',
               style: TextStyle(
-                color: availability.availableSlots < 5 ? Colors.red : Colors.green,
+                color: availability.availableSlots < 5
+                    ? Colors.red
+                    : Colors.green,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -1221,5 +1232,3 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
     );
   }
 }
-
-
