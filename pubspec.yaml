@@ -32,7 +32,9 @@ dependencies:
     sdk: flutter
   geolocator: ^11.0.0  # (Use a versão mais recente)
   geocoding: ^3.0.0   # (Use a versão mais recente)
+  intl: ^0.18.1 # ou a versão mais recente
   
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -54,7 +56,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  assets:
+    - lib/src/assets/    
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

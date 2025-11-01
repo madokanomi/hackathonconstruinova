@@ -167,21 +167,21 @@ class _HomePageState extends State<HomePage> {
       children: [
         const CircleAvatar(
           radius: 25,
-          backgroundColor: Colors.blueGrey,
+          backgroundImage: AssetImage('lib/src/assets/user.jpg'),
         ),
         const SizedBox(width: 12),
         const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hello, Shakir',
+              'Bom dia, Felipe',
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 14,
               ),
             ),
             Text(
-              'Good Morning.',
+              'Turistando!',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 18,
@@ -204,7 +204,7 @@ class _HomePageState extends State<HomePage> {
     return TextField(
       controller: _searchController, // Conectado ao controlador
       decoration: InputDecoration(
-        hintText: 'Search Destination',
+        hintText: 'Busque por sua localização',
         prefixIcon: Icon(Icons.search, color: Colors.grey[500]),
         filled: true,
         fillColor: Colors.grey[100],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// --- CORREÇÃO: IMPORT ADICIONADO ---
+import 'package:racaton_ead/src/presentation/rota_detalhes_page.dart';
 
 // --- 1. MODELO DE DADOS ---
 // Define a estrutura de um roteiro de passeio
@@ -43,31 +45,34 @@ class _RotasPageState extends State<RotasPage> {
       id: '1',
       titulo: 'Roteiro Centro Histórico',
       descricao: 'Descubra os monumentos e a arquitetura do coração da cidade.',
-      imagemPath: 'assets/rota_centro.jpg', // ADICIONE ESSA IMAGEM
+      imagemPath: 'lib/src/assets/rota_centro.jpg', // ADICIONE ESSA IMAGEM
       duracao: '3h',
-      paradas: 6,
+      paradas: 3,
     ),
     Rota(
       id: '2',
       titulo: 'Trilha das Praias Selvagens',
-      descricao: 'Uma aventura por paisagens naturais intocadas e vistas de tirar o fôlego.',
-      imagemPath: 'assets/rota_praias.jpg', // ADICIONE ESSA IMAGEM
+      descricao:
+          'Uma aventura por paisagens naturais intocadas e vistas de tirar o fôlego.',
+      imagemPath: 'lib/src/assets/rota_praias.jpg', // ADICIONE ESSA IMAGEM
       duracao: '5h',
       paradas: 4,
     ),
     Rota(
       id: '3',
       titulo: 'Tour Gastronômico Noturno',
-      descricao: 'Experimente os melhores sabores locais nos restaurantes mais badalados.',
-      imagemPath: 'assets/rota_gastro.jpg', // ADICIONE ESSA IMAGEM
+      descricao:
+          'Experimente os melhores sabores locais nos restaurantes mais badalados.',
+      imagemPath: 'lib/src/assets/rota_gastro.jpg', // ADICIONE ESSA IMAGEM
       duracao: '4h',
       paradas: 5,
     ),
     Rota(
       id: '4',
       titulo: 'Caminho das Artes Urbanas',
-      descricao: 'Explore o vibrante cenário de arte de rua e grafite da cidade.',
-      imagemPath: 'assets/rota_arte.jpg', // ADICIONE ESSA IMAGEM
+      descricao:
+          'Explore o vibrante cenário de arte de rua e grafite da cidade.',
+      imagemPath: 'lib/src/assets/rota_arte.jpg', // ADICIONE ESSA IMAGEM
       duracao: '2h 30m',
       paradas: 8,
     ),
@@ -79,8 +84,6 @@ class _RotasPageState extends State<RotasPage> {
     _filtrarRotas(); // Carrega os dados iniciais
   }
 
-  // Este método é chamado sempre que o widget "pai" (HomePage) é reconstruído
-  // e o searchQuery muda.
   @override
   void didUpdateWidget(covariant RotasPage oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -103,15 +106,13 @@ class _RotasPageState extends State<RotasPage> {
         // Se a busca for vazia, mostra todas as rotas
         rotasFiltradas = _todasAsRotas;
       } else {
-        // Se houver busca, filtra pelo título (lógica simples de exemplo)
-        // Em um app real, a 'widget.searchQuery' iria para uma API
+        // Se houver busca, filtra pelo título
         rotasFiltradas = _todasAsRotas
             .where((rota) =>
                 rota.titulo.toLowerCase().contains(widget.searchQuery.toLowerCase()))
             .toList();
       }
 
-      // Garante que o widget ainda está "montado" antes de atualizar o estado
       if (mounted) {
         setState(() {
           _rotasEncontradas = rotasFiltradas;
@@ -124,14 +125,12 @@ class _RotasPageState extends State<RotasPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      // Tela de Loading
       return const Center(
         child: CircularProgressIndicator(),
       );
     }
 
     if (_rotasEncontradas.isEmpty) {
-      // Tela de "Nenhum resultado"
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -142,7 +141,6 @@ class _RotasPageState extends State<RotasPage> {
               'Nenhuma rota encontrada',
               style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
-            // Mostra a busca atual
             Text(
               'Tente buscar por "${widget.searchQuery}" em outro local.',
               style: const TextStyle(color: Colors.grey),
@@ -154,44 +152,58 @@ class _RotasPageState extends State<RotasPage> {
     }
 
     // --- 3. A LISTA DE CARDS ---
-    // Exibe a lista de rotas encontradas
     return ListView.builder(
-      // Adiciona um padding em volta da lista inteira
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       itemCount: _rotasEncontradas.length,
       itemBuilder: (context, index) {
         final rota = _rotasEncontradas[index];
-        // Retorna o widget do card
-        return _buildRotaCard(rota);
+        
+        // --- CORREÇÃO APLICADA AQUI ---
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RotaDetalhesPage(
+                  // Passa o ID da rota
+                  id: rota.id, 
+                  imagePath: rota.imagemPath,
+                  title: rota.titulo,
+                  description: rota.descricao,
+                  location: null, 
+                  price: null, 
+                  // Passa a duração da rota
+                  duracao: rota.duracao, 
+                ),
+              ),
+            );
+          },
+          child: _buildRotaCard(rota),
+        );
       },
     );
   }
 
   // --- 4. WIDGET DO CARD ---
-  // Constrói o card de um roteiro
   Widget _buildRotaCard(Rota rota) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 20.0), // Espaçamento entre os cards
+      margin: const EdgeInsets.only(bottom: 20.0), 
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
       ),
-      clipBehavior: Clip.antiAlias, // Para a imagem respeitar as bordas
+      clipBehavior: Clip.antiAlias, 
       elevation: 3,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Imagem do Card
           Image.asset(
             rota.imagemPath,
             height: 180,
             width: double.infinity,
             fit: BoxFit.cover,
-            // Mostra um erro caso a imagem não seja encontrada
             errorBuilder: (context, error, stackTrace) => Container(
               height: 180,
               color: Colors.grey[300],
-              // --- CORREÇÃO AQUI ---
-              // Removido o 'const' de Center e Column
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -199,21 +211,17 @@ class _RotasPageState extends State<RotasPage> {
                     const Icon(Icons.image_not_supported, color: Colors.grey),
                     const SizedBox(height: 8),
                     const Text('Adicione a imagem:'),
-                    // Este Text não pode estar em uma Column 'const'
                     Text(rota.imagemPath, style: const TextStyle(fontSize: 12)),
                   ],
                 ),
               ),
             ),
           ),
-
-          // Conteúdo de texto do Card
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Título
                 Text(
                   rota.titulo,
                   style: const TextStyle(
@@ -223,8 +231,6 @@ class _RotasPageState extends State<RotasPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-
-                // Descrição
                 Text(
                   rota.descricao,
                   style: TextStyle(
@@ -233,8 +239,6 @@ class _RotasPageState extends State<RotasPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // Informações (Duração e Paradas)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -252,7 +256,6 @@ class _RotasPageState extends State<RotasPage> {
     );
   }
 
-  /// Widget auxiliar para criar os "chips" de informação (duração, paradas)
   Widget _buildInfoChip(IconData icon, String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -277,3 +280,4 @@ class _RotasPageState extends State<RotasPage> {
     );
   }
 }
+
