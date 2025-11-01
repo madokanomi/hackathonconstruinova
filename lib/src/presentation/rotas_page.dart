@@ -11,6 +11,7 @@ class Rota {
   final String imagemPath; // Caminho para a imagem em assets/
   final String duracao;
   final int paradas; // Número de paradas no roteiro
+  final double price;
 
   Rota({
     required this.id,
@@ -19,6 +20,7 @@ class Rota {
     required this.imagemPath,
     required this.duracao,
     required this.paradas,
+    required this.price,
   });
 }
 
@@ -48,6 +50,7 @@ class _RotasPageState extends State<RotasPage> {
       imagemPath: 'lib/src/assets/rota_centro.jpg', // ADICIONE ESSA IMAGEM
       duracao: '3h',
       paradas: 3,
+      price: 100,
     ),
     Rota(
       id: '2',
@@ -57,6 +60,7 @@ class _RotasPageState extends State<RotasPage> {
       imagemPath: 'lib/src/assets/rota_praias.jpg', // ADICIONE ESSA IMAGEM
       duracao: '5h',
       paradas: 4,
+      price: 150,
     ),
     Rota(
       id: '3',
@@ -66,6 +70,7 @@ class _RotasPageState extends State<RotasPage> {
       imagemPath: 'lib/src/assets/rota_gastro.jpg', // ADICIONE ESSA IMAGEM
       duracao: '4h',
       paradas: 5,
+      price: 120.00,
     ),
     Rota(
       id: '4',
@@ -75,6 +80,7 @@ class _RotasPageState extends State<RotasPage> {
       imagemPath: 'lib/src/assets/rota_arte.jpg', // ADICIONE ESSA IMAGEM
       duracao: '2h 30m',
       paradas: 8,
+      price: 80.00,
     ),
   ];
 
@@ -173,7 +179,7 @@ class _RotasPageState extends State<RotasPage> {
                   title: rota.titulo,
                   description: rota.descricao,
                   location: null,
-                  price: null,
+                  price: rota.price,
                   // Passa a duração da rota
                   duracao: rota.duracao,
                 ),

@@ -51,7 +51,7 @@ class RotaDetalhesPage extends StatefulWidget {
   final String imagePath;
   final String title;
   final String? location;
-  final String? price; // Preço "inicial"
+  final double? price; // Preço "inicial"
   final String? description;
   final String? duracao;
 
@@ -207,7 +207,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
   void initState() {
     super.initState();
     // --- CORRIGIDO: Garantir que o fallback seja double (0.0) ---
-    _basePrice = double.tryParse(widget.price ?? '0.0') ?? 0.0;
+    _basePrice = widget.price ?? 0.0;
 
     // --- NOVO: Carrega as paradas com base no ID da rota ---
     _carregarParadasDaRota();
@@ -616,6 +616,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
     // Usamos um ListView.builder para criar os itens
     // O `shrinkWrap` e `physics` são necessários por estar dentro de um SingleChildScrollView
     return ListView.builder(
+      padding: EdgeInsets.zero,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: _paradasDaRota.length,
@@ -813,7 +814,7 @@ class _RotaDetalhesPageState extends State<RotaDetalhesPage> {
                 ),
               ),
               Text(
-                '(${_personCount} Pessoas)',
+                '($_personCount Pessoas)',
                 style: TextStyle(color: Colors.grey[600], fontSize: 14),
               ),
             ],
